@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 /*
 
@@ -19,7 +19,7 @@ The solution has to use React and only functional components and hooks, no class
 - To submit, simply fork this codepen, implement your solution and send it to us via LinkedIn or via email to antonio@usesilo.com.
 
 */
-const url = "https://reqres.in/api/unknown?per_page=12"
+const url = 'https://reqres.in/api/unknown?per_page=12'
 
 const App = () => {
     const [colors, setColors] = React.useState([])
@@ -31,10 +31,7 @@ const App = () => {
     React.useEffect(() => {
         fetch(url)
             .then((res) => res.json())
-            .then((results) => {
-                setColors(results.data)
-                console.log(results.data)
-            })
+            .then((results) => setColors(results.data))
             .catch((reason) => {
                 // todo: move data to frontend
                 // todo: more error handling
@@ -44,25 +41,35 @@ const App = () => {
 
     return (
         <>
-            <div style={{ maxWidth: "600px", margin: "150px auto" }}>
+            <div
+                style={{
+                    maxWidth: '1000px',
+                    margin: '150px auto',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                }}
+            >
                 {colors.map((color, index) => (
-                    <div
-                        key={`${color.name}_${index}`}
-                        className="colorCard"
-                        style={{
-                            backgroundColor: color.color,
-                            padding: "30px",
-                            margin: "20px",
-                            borderRadius: "5px",
-                        }}
-                        onClick={() => {
-                            setShowLightbox(true)
-                            setLightbox(color)
-                        }}
-                    >
-                        <h4 style={{ color: "#fff", textAlign: "center" }}>
-                            {color.name}
-                        </h4>
+                    <div key={`${color.name}_${index}`}>
+                        <div
+                            className="colorCard"
+                            style={{ backgroundColor: color.color }}
+                            onClick={() => {
+                                setShowLightbox(true)
+                                setLightbox(color)
+                            }}
+                        >
+                            <div
+                                style={{
+                                    color: lightOrDark(color.color)
+                                        ? '#000000c2'
+                                        : '#ffffffc2',
+                                }}
+                            >
+                                <h4>{color.name}</h4>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -79,51 +86,112 @@ const App = () => {
 export default App
 
 const Lightbox = ({ props, close }) => {
+    const [load, setLoad] = React.useState(false)
+    const [copied, setCopied] = React.useState(false)
+
+    React.useEffect(() => {
+        setLoad(true)
+        return () => {
+            setLoad(false)
+        }
+    }, [])
+
+    // set timer after text is copied
+    React.useEffect(() => {
+        let copiedTimer
+        if (copied) {
+            copiedTimer = setTimeout(() => setCopied(false), 1500)
+        }
+        // clean up timer
+        return () => clearTimeout(copiedTimer)
+    }, [copied])
+
     return (
-        <div
-            style={{
-                display: "flex",
-                justifyContent: "center",
-                height: "100vh",
-                width: "100vw",
-                left: 0,
-                top: 0,
-                position: "fixed",
-            }}
-        >
+        <div className={(load ? 'loaded' : '') + ' lightbox'}>
             <div
-                onClick={close}
-                style={{
-                    width: "100vw",
-                    height: "100vh",
-                    backgroundColor: "#000000ab",
-                    left: 0,
-                    top: 0,
-                    position: "fixed",
+                onClick={() => {
+                    setLoad(false)
+                    setTimeout(() => close(), 300)
                 }}
+                className="lightboxBg"
             />
             <div
+                className={(load ? 'loaded' : '') + ' lightboxCard'}
                 style={{
                     backgroundColor: props.color,
-                    padding: "30px",
-                    margin: "auto",
-                    borderRadius: "5px",
-                    width: "300px",
-                    height: "300px",
-                    zIndex: 100,
                 }}
             >
-                <h4 style={{ color: "#fff", textAlign: "center" }}>
-                    Name: {props.name}
-                    <br />
-                    HEX: {props.color}
-                    <br />
-                    Year: {props.year}
-                    <br />
-                    Pantone Value: {props.pantone_value}
-                    <br />
-                </h4>
+                <div
+                    style={{
+                        // set color to light or dark to contrast background color
+                        color: lightOrDark(props.color)
+                            ? '#000000c2'
+                            : '#ffffffc2',
+                    }}
+                >
+                    <h1>{props.name}</h1>
+                    <p
+                        className="tooltip"
+                        onClick={() =>
+                            navigator.clipboard
+                                .writeText(props.color)
+                                .then((r) => setCopied(true))
+                        }
+                    >
+                        {props.color}
+                        <span className="tooltipMsg">
+                            {copied ? 'Copied!' : 'Click to Copy'}
+                        </span>
+                    </p>
+                    <h4>
+                        <br/>
+                        <hr
+                            style={{
+                                // set color to light or dark to contrast background color
+                                borderColor: lightOrDark(props.color)
+                                    ? '#000000c2'
+                                    : '#ffffffc2',
+                            }}
+                        />
+                        Year: {props.year}
+                        <br/>
+                        Pantone Value: {props.pantone_value}
+                        <br/>
+                    </h4>
+                </div>
             </div>
         </div>
     )
+}
+
+// check if color is light or dark
+// return boolean, true if light or false if dark
+function lightOrDark(color) {
+    // Variables for red, green, blue values
+    let r, g, b, hsp
+
+    // Check the format of the color, HEX or RGB?
+    if (color.match(/^rgb/)) {
+        // If RGB --> store the red, green, blue values in separate variables
+        color = color.match(
+            /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/,
+        )
+        r = color[1]
+        g = color[2]
+        b = color[3]
+    } else {
+        // If hex --> Convert it to RGB
+        color = +(
+            '0x' + color.slice(1).replace(color.length < 5 && /./g, '$&$&')
+        )
+        r = color >> 16
+        g = (color >> 8) & 255
+        b = color & 255
+    }
+
+    // HSP (Highly Sensitive Poo) equation from http://alienryderflex.com/hsp.html
+    hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b))
+
+    // Using the HSP value, determine whether the color is light or dark
+    return hsp > 127.5
 }
