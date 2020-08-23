@@ -5,6 +5,23 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+.noScroll {
+    overflow: hidden;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.intro {
+    justify-content: start;
+    flex-direction: column;
+}
+
 .colorCard {
     display: flex;
     justify-content: flex-end;
@@ -54,22 +71,12 @@ body {
     justify-content: flex-end;
     flex-direction: column;
     margin: auto;
-    width: 300px;
-    height: 300px;
+    width: 80%;
+    max-width: 400px;
     border-radius: 12px;
     z-index: 100;
     transition: transform 0.3s ease;
     transform: translateY(50px);
-}
-
-.lightboxCard > div {
-    text-transform: capitalize;
-    padding: 15px;
-
-}
-
-.lightboxCard > div > h1 {
-
 }
 
 .loaded {
@@ -77,13 +84,52 @@ body {
     transform: translateY(0px);
 }
 
+.lbName {
+    margin: 0 0 5px;
+    text-transform: capitalize;
+}
+
+.lbYear {
+    margin: 0 0 20px;
+    text-transform: capitalize;
+}
+
+.lbPantone {
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.lbHex {
+    margin: 0;
+}
+
+label {
+    font-size: small;
+    opacity: 65%;
+
+}
+
+.lightboxInfo > div {
+    padding: 20px 25px;
+}
+
+.lightboxInfo > hr {
+    margin: 0;
+}
+
+.tooltip {
+
+    position: relative;
+    display: inline-block;
+    cursor: copy;
+}
+
 .tooltipMsg {
     visibility: hidden;
-    /*width: 90px;*/
     background-color: #282323;
     color: #fff;
     text-align: center;
-    border-radius: 6px;
+    border-radius: 2px;
     padding: 5px 8px;
     font-size: small;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -98,14 +144,32 @@ body {
     z-index: 1;
 }
 
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: copy;
-}
 
 .tooltip:hover .tooltipMsg {
     visibility: visible;
     opacity: 1;
     transform: scale(1.2);
+}
+
+.flexRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.unsplashCredit, .unsplashCredit a {
+    color: #fff
+}
+
+.divImg label {
+    position: absolute;
+    top: -24px;
+    right: 29px;
+}
+
+.responsiveImg {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 12px 12px 0 0;
 }

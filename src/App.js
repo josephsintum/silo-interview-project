@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 /*
 
@@ -19,67 +19,136 @@ The solution has to use React and only functional components and hooks, no class
 - To submit, simply fork this codepen, implement your solution and send it to us via LinkedIn or via email to antonio@usesilo.com.
 
 */
-const url = 'https://reqres.in/api/unknown?per_page=12'
+const url = "https://reqres.in/api/unknown?per_page=12"
+
+// private client key for unsplash api and will be deactivated on Aug 30th
+// const client_id = "rDK3DGIzMN5mAlpY-qLfE_j8ChXA0Z6vWaRcjgjxA38"
+const client_id = "rDK3DGIzMN5mAlpY-qLfE_j8ChXA0Z6vWaRcjgjx38"
+
+// referral query for Unsplash attribution
+// see https://help.unsplash.com/en/articles/2511315-guideline-attribution
+const referralQuery = "/?utm_source=color_picker&utm_medium=referral"
 
 const App = () => {
+    // Holds array of colors from reqres.in api
     const [colors, setColors] = React.useState([])
+    // Boolean to show or hide lightbox
     const [showLightbox, setShowLightbox] = React.useState(false)
+    // holds lightbox color object
     const [lightbox, setLightbox] = React.useState({})
+    // handles loading and error states
+    const [loading, setLoading] = React.useState({ state: false, error: null })
 
-    // todo: add loading
     // Fetching data from endpoint on page load
     React.useEffect(() => {
+        setLoading((prevState) => ({ ...prevState, status: true }))
         fetch(url)
-            .then((res) => res.json())
-            .then((results) => setColors(results.data))
-            .catch((reason) => {
-                // todo: move data to frontend
-                // todo: more error handling
-                console.log(reason)
-            })
+            .then((response) =>
+                response.json().then((data) => {
+                    setLoading((prevState) => ({ ...prevState, status: false }))
+                    if (!response.ok) throw Error(data.errors || "HTTP error")
+                    return data
+                })
+            )
+            .then(
+                (results) => {
+                    // Getting image from unsplash API
+                    results.data.map((color) => {
+                        // Unsplash API, search query -> https://unsplash.com/documentation#get-a-random-photo
+                        let unsplashURL = `https://api.unsplash.com/photos/random/?client_id=${client_id}&query=${color.name}`
+
+                        // fetch images from unsplash API with color.name as query
+                        // add images to color object as color.image
+                        // add color object to state
+                        fetch(unsplashURL, { referrerPolicy: "no-referrer" })
+                            .then((response) =>
+                                response.json().then((data) => {
+                                    if (!response.ok)
+                                        throw Error(data.errors || "HTTP error")
+                                    return data
+                                })
+                            )
+                            .then(
+                                (results) => {
+                                    // adding images to color object
+                                    color.image = {
+                                        url: results.urls.regular,
+                                        photographer: results.user.name,
+                                        profile: results.user.links.html,
+                                    }
+                                    // adding color object to state
+                                    setColors((prevState) => [
+                                        ...prevState,
+                                        color,
+                                    ])
+                                },
+                                (error) => {
+                                    setColors((prevState) => [
+                                        ...prevState,
+                                        color,
+                                    ])
+                                    console.log(error)
+                                }
+                            )
+                        return color
+                    })
+                },
+                (error) => {
+                    setLoading((prevState) => ({ ...prevState, error: error }))
+                    console.log(error)
+                }
+            )
     }, [])
 
+    // handle body scroll when lightbox is open
+    React.useEffect(() => {
+        if (showLightbox) document.body.classList.add("noScroll")
+        else document.body.classList.remove("noScroll")
+    }, [showLightbox])
+
     return (
-        <>
-            <div
-                style={{
-                    maxWidth: '1000px',
-                    margin: '150px auto',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexWrap: 'wrap',
-                }}
-            >
-                {colors.map((color, index) => (
-                    <div key={`${color.name}_${index}`}>
-                        <div
-                            className="colorCard"
-                            style={{ backgroundColor: color.color }}
-                            onClick={() => {
-                                setShowLightbox(true)
-                                setLightbox(color)
-                            }}
-                        >
+        <main>
+            <div className="intro container">
+                <h1>An array of colors</h1>
+                <p>Hello world</p>
+            </div>
+            {loading.state ? (
+                <h2>Loading colors</h2>
+            ) : loading.error ? (
+                <h2>An error occurred: {loading.error}</h2>
+            ) : (
+                <section className="container">
+                    {colors.map((color, index) => (
+                        <div key={`${color.name}_${index}`}>
                             <div
-                                style={{
-                                    color: lightOrDark(color.color)
-                                        ? '#000000c2'
-                                        : '#ffffffc2',
+                                className="colorCard"
+                                style={{ backgroundColor: color.color }}
+                                onClick={() => {
+                                    setShowLightbox(true)
+                                    setLightbox(color)
                                 }}
                             >
-                                <h4>{color.name}</h4>
+                                <div
+                                    style={{
+                                        color: lightOrDark(color.color)
+                                            ? "#000000c2"
+                                            : "#ffffffc2",
+                                    }}
+                                >
+                                    <h4>{color.name}</h4>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-            {showLightbox ? (
-                <Lightbox
-                    props={lightbox}
-                    close={() => setShowLightbox(false)}
-                />
-            ) : null}
-        </>
+                    ))}
+                    {showLightbox ? (
+                        <Lightbox
+                            props={lightbox}
+                            close={() => setShowLightbox(false)}
+                        />
+                    ) : null}
+                </section>
+            )}
+        </main>
     )
 }
 
@@ -107,7 +176,7 @@ const Lightbox = ({ props, close }) => {
     }, [copied])
 
     return (
-        <div className={(load ? 'loaded' : '') + ' lightbox'}>
+        <div className={(load ? "loaded" : "") + " lightbox"}>
             <div
                 onClick={() => {
                     setLoad(false)
@@ -116,48 +185,89 @@ const Lightbox = ({ props, close }) => {
                 className="lightboxBg"
             />
             <div
-                className={(load ? 'loaded' : '') + ' lightboxCard'}
+                className={(load ? "loaded" : "") + " lightboxCard"}
                 style={{
                     backgroundColor: props.color,
                 }}
             >
+                {/*Lightbox Image*/}
+                {props.image ? (
+                    <div className="divImg">
+                        <img
+                            alt={props.name}
+                            src={props.image.url}
+                            className="responsiveImg"
+                        />
+                        <label className="unsplashCredit">
+                            Credit to{" "}
+                            <a
+                                href={props.image.profile + referralQuery}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {props.image.photographer}
+                            </a>{" "}
+                            on{" "}
+                            <a
+                                href={`https://unsplash.com${referralQuery}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Unsplash
+                            </a>{" "}
+                        </label>
+                    </div>
+                ) : (
+                    ""
+                )}
+
+                {/*Lightbbox body*/}
                 <div
+                    className="lightboxInfo"
                     style={{
                         // set color to light or dark to contrast background color
                         color: lightOrDark(props.color)
-                            ? '#000000c2'
-                            : '#ffffffc2',
+                            ? "#000000c2"
+                            : "#ffffffc2",
                     }}
                 >
-                    <h1>{props.name}</h1>
-                    <p
-                        className="tooltip"
-                        onClick={() =>
-                            navigator.clipboard
-                                .writeText(props.color)
-                                .then((r) => setCopied(true))
-                        }
-                    >
-                        {props.color}
-                        <span className="tooltipMsg">
-                            {copied ? 'Copied!' : 'Click to Copy'}
-                        </span>
-                    </p>
-                    <h4>
-                        <br/>
-                        <hr
-                            style={{
-                                // set color to light or dark to contrast background color
-                                borderColor: lightOrDark(props.color)
-                                    ? '#000000c2'
-                                    : '#ffffffc2',
-                            }}
-                        />
-                        Year: {props.year}
-                        <br/>
-                        Pantone Value: {props.pantone_value}
-                        <br/>
-                    </h4>
+                    <div>
+                        <h1 className="lbName">{props.name}</h1>
+
+                        <h5 className="lbYear">{props.year}</h5>
+
+                        <div className="flexRow">
+                            <h3
+                                className="tooltip lbPantone"
+                                onClick={() =>
+                                    navigator.clipboard
+                                        .writeText(props.pantone_value)
+                                        .then(() => setCopied(true))
+                                }
+                            >
+                                <label>Pantone:</label>
+                                <br /> {props.pantone_value}
+                                <span className="tooltipMsg">
+                                    {copied ? "HEX copied!" : "Click to Copy"}
+                                </span>
+                            </h3>
+                            <h3
+                                className="tooltip lbHex"
+                                onClick={() =>
+                                    navigator.clipboard
+                                        .writeText(props.color)
+                                        .then(() => setCopied(true))
+                                }
+                            >
+                                <label>HEX:</label> <br />
+                                {props.color}
+                                <span className="tooltipMsg">
+                                    {copied ? "HEX copied!" : "Click to Copy"}
+                                </span>
+                            </h3>
+                            <div />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,7 +284,7 @@ function lightOrDark(color) {
     if (color.match(/^rgb/)) {
         // If RGB --> store the red, green, blue values in separate variables
         color = color.match(
-            /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/,
+            /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/
         )
         r = color[1]
         g = color[2]
@@ -182,7 +292,7 @@ function lightOrDark(color) {
     } else {
         // If hex --> Convert it to RGB
         color = +(
-            '0x' + color.slice(1).replace(color.length < 5 && /./g, '$&$&')
+            "0x" + color.slice(1).replace(color.length < 5 && /./g, "$&$&")
         )
         r = color >> 16
         g = (color >> 8) & 255
