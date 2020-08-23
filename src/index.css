@@ -14,12 +14,16 @@ body {
     margin: 50px auto;
     display: flex;
     justify-content: center;
+    text-align: justify;
     flex-wrap: wrap;
 }
 
 .intro {
     justify-content: start;
     flex-direction: column;
+    padding: 0 50px;
+    max-width: 600px;
+    line-height: 1.5em;
 }
 
 .colorCard {

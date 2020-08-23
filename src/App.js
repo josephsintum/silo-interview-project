@@ -22,8 +22,7 @@ The solution has to use React and only functional components and hooks, no class
 const url = "https://reqres.in/api/unknown?per_page=12"
 
 // private client key for unsplash api and will be deactivated on Aug 30th
-// const client_id = "rDK3DGIzMN5mAlpY-qLfE_j8ChXA0Z6vWaRcjgjxA38"
-const client_id = "rDK3DGIzMN5mAlpY-qLfE_j8ChXA0Z6vWaRcjgjx38"
+const client_id = "rDK3DGIzMN5mAlpY-qLfE_j8ChXA0Z6vWaRcjgjxA38"
 
 // referral query for Unsplash attribution
 // see https://help.unsplash.com/en/articles/2511315-guideline-attribution
@@ -37,7 +36,7 @@ const App = () => {
     // holds lightbox color object
     const [lightbox, setLightbox] = React.useState({})
     // handles loading and error states
-    const [loading, setLoading] = React.useState({ state: false, error: null })
+    const [loading, setLoading] = React.useState({ status: false, error: null })
 
     // Fetching data from endpoint on page load
     React.useEffect(() => {
@@ -110,7 +109,28 @@ const App = () => {
         <main>
             <div className="intro container">
                 <h1>An array of colors</h1>
-                <p>Hello world</p>
+                <p>
+                    This is a demo application, in response to{" "}
+                    <a href="https://codepen.io/abmirayo/pen/GRZgYmz">
+                        Silo's magic color challenge
+                    </a>
+                    <br />
+                    This is a grid of cards with each showing color in the
+                    background(from HEX value) and has the name of the color
+                    either light or dark to contrast the background color.
+                    <br />
+                    On hover, each card zooms without shifting or moving any
+                    adjacent cards.
+                    <br />
+                    On clicking, the card opens a lightbox modal in the center
+                    of the page, displaying more details about that color and a
+                    random photo(from unsplash) with reference to that color.
+                    <br />
+                    Clicking on the HEX value or pantone value will copy to
+                    clipboard.
+                    <br />
+                    Clicking out of the card will close the lightbox modal.
+                </p>
             </div>
             {loading.state ? (
                 <h2>Loading colors</h2>
