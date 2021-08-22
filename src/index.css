@@ -1,12 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&display=swap");
+
 body {
     margin: 0;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-family: "Raleway", Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 .noScroll {
     overflow: hidden;
+}
+
+h1 {
+    font-weight: 900;
+}
+
+h4 {
+    font-weight: 700;
 }
 
 .container {
@@ -64,10 +74,11 @@ body {
 .lightboxBg {
     width: 100vw;
     height: 100vh;
-    background-color: #00000080;
+    background-color: #000000bb;
     left: 0;
     top: 0;
     position: fixed;
+    backdrop-filter: blur(4px);
 }
 
 .lightboxCard {
@@ -110,7 +121,6 @@ body {
 label {
     font-size: small;
     opacity: 65%;
-
 }
 
 .lightboxInfo > div {
@@ -122,7 +132,6 @@ label {
 }
 
 .tooltip {
-
     position: relative;
     display: inline-block;
     cursor: copy;
@@ -148,7 +157,6 @@ label {
     z-index: 1;
 }
 
-
 .tooltip:hover .tooltipMsg {
     visibility: visible;
     opacity: 1;
@@ -161,8 +169,9 @@ label {
     justify-content: space-between;
 }
 
-.unsplashCredit, .unsplashCredit a {
-    color: #fff
+.unsplashCredit,
+.unsplashCredit a {
+    color: #fff;
 }
 
 .divImg label {
