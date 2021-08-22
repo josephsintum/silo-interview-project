@@ -1,68 +1,33 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Silo Interview Project
 
-## Available Scripts
+## Challenge
 
-In the project directory, you can run:
+Consume the following GET endpoint:
+https://reqres.in/api/unknown?per_page=12
+It will return a JSON object. The data property of that object is an array of colors. 
 
-### `yarn start`
+Using React:
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Fetch that endpoint.
+- Render cards in the screen with each color. Each card should at least have the name of the color. The cards (or part of the card's background) should have a background color representing itself (you can use the HEX value). Have fun with it, get as creative as you want. 
+- Make it so that using only CSS, hovering on each card will make them zoom without shifting or moving any adjacent cards.
+- Finally, implement it so that clicking on any card will open a lightbox modal in the center of the page, displaying any more details you want about that color. Clicking outside of the lightbox should close it.
+- If at any point during the exercise you want to break the spec above to get really creative and implement something you really like, please do so. 
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The solution has to use React and only functional components and hooks, no classes.
 
-### `yarn test`
+- To submit, simply fork this codepen, implement your solution and send it to us via LinkedIn or via email to antonio.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Solution - An array of colors
 
-### `yarn build`
+This is a demo application, in response to Silo's magic color challenge.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This is a grid of cards with each showing color in the background(from HEX value) and has the name of the color either light or dark to contrast the background color.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+On hover, each card zooms without shifting or moving any adjacent cards.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+On clicking, the card opens a lightbox modal in the center of the page, displaying more details about that color and a random photo(from unsplash) with reference to that color.
 
-### `yarn eject`
+Clicking on the HEX value or pantone value will copy to clipboard.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Clicking out of the card will close the lightbox modal.
